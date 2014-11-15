@@ -1,0 +1,34 @@
+# See README for more info about these settings
+
+splunkforwarder:
+  version: 6.2.0
+  package_filename: splunkforwarder-6.2.0-237341-linux-2.6-amd64.deb
+  source_hash: sha256=8336952b317f9a9bdf7f47358d66b823948fabccbf46de6695d0d6560f5a4ee3
+  download_base_url: http://your.domain.com/downloads/
+  cert_filename: selfsignedcert.pem
+  intermediate: True
+  forward_servers:
+    - 1.2.3.4:9998
+    - 1.2.4.5:9998
+  inputs:
+    monitor:
+      nginx-access-log:
+        monitor: /var/log/nginx/access.log
+        index: search
+        sourcetype: nginx_access_log
+      nginx-error-log:
+        monitor: /var/log/nginx/error.log
+        index: search
+        sourcetype: nginx_error_log
+
+splunk:
+  secret: your shared splunk secret
+  password:
+    outputs.conf: your (preferably encrypted) password
+    inputs.conf: your (preferably encrypted) password
+  self_cert_filename: selfsignedcert.pem
+  certs:
+    cacert.pem:
+      content: put your cert content here
+    selfsignedcert.pem:
+      content: put your cert content here
