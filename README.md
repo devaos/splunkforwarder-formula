@@ -182,6 +182,30 @@ below to see how to determine what your encrypted password is.
 
 ### splunk:certs (Dict)
 
+Each of the SSL certificates you need to install.
+
+Example:
+
+```yaml
+splunk:
+  certs:
+    cacert.pem:
+      content: |
+        -----BEGIN CERTIFICATE-----
+        xxxxxxYourCertificateHerexxxxxx
+        -----END CERTIFICATE-----
+    selfsignedcert.pem:
+      content: |
+        -----BEGIN CERTIFICATE-----
+        xxxxxxYourCertificateHerexxxxxx
+        -----END CERTIFICATE-----
+```
+
+Note that you don't have to use a `selfsignedcert.pem`, you can use a real cert
+if you have one.  In that case you must configure
+[splunk:self_cert_filename](splunkself_cert_filename) to match the name of the
+cert you added here in lieu of selfsignedcert.pem.
+
 
 ## Splunk Optional Pillar Items 
 
