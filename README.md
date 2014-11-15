@@ -20,6 +20,11 @@ See the full [Salt Formulas installation and usage instructions](http://docs.sal
 
 Install Splunk Universal Forwarder and all its dependencies, then start the service.
 
+If you configured [splunkforwarder:intermediate](#splunkforwarderintermediate) = True,
+this includes the
+[splunkforwarder.intermediate-forwarder](#splunkforwarder-intermediate-forwarder)
+recipe.
+
 ### splunkforwarder.certs
 
 Install SSL certificates.
@@ -43,19 +48,40 @@ Configuration
 
 ## Splunk Forwarder Required Pillar Items
 
-### splunkforwarder:version = 6.2.0
+### splunkforwarder:version
 
 What version of Splunk Universal Forwarder are you installing?
 
-### splunkforwarder:package_filename = splunkforwarder-6.2.0-237341-linux-2.6-amd64.deb
+Example:
+
+```yaml
+splunkforwarder:
+  version: 6.2.0
+```
+
+### splunkforwarder:package_filename
 
 The name of the package you are installing.
 
-### splunkforwarder:source_hash = sha256=xxxxxx
+Example:
+
+```yaml
+splunkforwarder:
+  package_filename: splunkforwarder-6.2.0-237341-linux-2.6-amd64.deb
+```
+
+### splunkforwarder:source_hash
 
 The checksum of the file you're installing.
 
-### splunkforwarder:download_base_url = http://your.domain.com/downloads/
+Example:
+
+```yaml
+splunkforwarder:
+  source_hash: sha256=xxxxxx
+```
+
+### splunkforwarder:download_base_url
 
 **This URL must contain a trailing slash.**
 
@@ -65,10 +91,19 @@ access.
 
 This is the base URL where you put the images.
 
+Example:
+
+```yaml
+splunkforwarder:
+  download_base_url: http://your.domain.com/downloads/
+```
+
 ### splunkforwarder:forward_servers (List)
 
 This is a list of servers to forward to.  Splunk will treat these like a round-robin and will forward
 to all of the servers in the list.  If/when one goes down the others will get the traffic.
+
+Example:
 
 ```yaml
 splunkforwarder:
@@ -90,7 +125,7 @@ monitoring stanza.
 
 Any additional entries are added directly to the [monitor] stanza in Splunk.
 
-#### Example:
+Example:
 
 ```yaml
 splunkforwarder:
@@ -102,7 +137,7 @@ splunkforwarder:
         sourcetype: nginx_error_log
 ```
 
-#### Resulting Splunk inputs.conf Stanza:
+Resulting Splunk inputs.conf Stanza:
 
 ```text
 [monitor:///var/log/nginx/error.log]
@@ -113,7 +148,7 @@ sourcetype = nginx_error_log
 
 ## Splunk Forwarder Optional Pillar Items
 
-### splunkforwarder:intermediate = True|False
+### splunkforwarder:intermediate
 
 Default = False
 
@@ -178,11 +213,14 @@ and for `splunk:password:outputs.conf`
 
 3) On the system you just installed Splunk onto, inspect these files:
 
-    `/opt/splunkforwarder/etc/system/local/inputs.conf` - copy the encrypted value of `password` into `splunk:password:inputs.conf`
-    `/opt/splunkforwarder/etc/system/local/outputs.conf` - copy the encrypted value of `sslPassword` into `splunk:password:outputs.conf`
+- `/opt/splunkforwarder/etc/system/local/inputs.conf`
+  - copy the encrypted value of `password` into the `splunk:password:inputs.conf` pillar
+- `/opt/splunkforwarder/etc/system/local/outputs.conf`
+  - copy the encrypted value of `sslPassword` into the `splunk:password:outputs.conf` pillar
 
 Now you have the encrypted value stored in your pillar instead of the plain
-text.  For this to work, the `splunk:secret` must be shared across all machines.
+text.  For this to work, the same `splunk:secret` must be shared across all machines
+using these encrypted passwords.
 
 Note: The same exact password will have 2 different encrypted values, one for
 inputs.conf and one for outputs.conf.  Presumably the name of the file that it
