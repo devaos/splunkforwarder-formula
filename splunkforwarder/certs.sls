@@ -1,10 +1,16 @@
 
+include:
+  - splunkforwarder.user
+
+
 /opt/splunkforwarder/etc/certs:
   file:
     - directory
     - user: splunk
     - group: splunk
     - mode: 500
+    - require:
+      - user: splunk
 
 {% for filename, config in salt['pillar.get']('splunk:certs', {}).iteritems() %}
 
@@ -17,6 +23,7 @@
     - contents_pillar: splunk:certs:{{ filename }}:content
     - require:
       - file: /opt/splunkforwarder/etc/certs
+      - user: splunk
     - require_in:
       - service: splunkforwarder
     - watch_in:
