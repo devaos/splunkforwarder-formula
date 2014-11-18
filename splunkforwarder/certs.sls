@@ -9,6 +9,7 @@ include:
     - user: splunk
     - group: splunk
     - mode: 500
+    - makedirs: True
     - require:
       - user: splunk
 
