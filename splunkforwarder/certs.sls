@@ -3,6 +3,16 @@ include:
   - splunkforwarder.user
 
 
+/opt/splunkforwarder/etc:
+  file:
+    - directory
+    - user: splunk
+    - group: splunk
+    - mode: 755
+    - makedirs: True
+    - require:
+      - user: splunk
+
 /opt/splunkforwarder/etc/certs:
   file:
     - directory
@@ -11,7 +21,7 @@ include:
     - mode: 500
     - makedirs: True
     - require:
-      - user: splunk
+      - file: /opt/splunkforwarder/etc
 
 {% for filename, config in salt['pillar.get']('splunk:certs', {}).iteritems() %}
 
