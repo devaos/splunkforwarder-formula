@@ -1,10 +1,24 @@
 # See README for more info about these settings
 
 splunkforwarder:
+
+### --> begin mutually exclusive
+### EITHER: use your own custom package repository:
+
+  package:
+    name: your-custom-splunkforwarder-package
+    repo: your-custom-repo-name
+    version: optional-specific-version-number
+
+### OR: download the package file directly and install it:
+
   version: 6.2.0
   package_filename: splunkforwarder-6.2.0-237341-linux-2.6-amd64.deb
   source_hash: sha256=8336952b317f9a9bdf7f47358d66b823948fabccbf46de6695d0d6560f5a4ee3
   download_base_url: http://your.domain.com/downloads/
+
+### <-- end mutually exclusive
+
   cert_filename: selfsignedcert.pem
   intermediate: True
   forward_servers:
