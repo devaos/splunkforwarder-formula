@@ -15,7 +15,11 @@ include:
     - context:
       self_cert: {{ self_cert }}
     - require:
+{% if salt['pillar.get']('splunkforwarder:package:name', False) %}
       - pkg: splunkforwarder
+{% else %}
+      - cmd: splunkforwarder
+{% endif %}
       - file: /opt/splunkforwarder/etc/certs/{{ self_cert }}
     - require_in:
       - service: splunkforwarder
@@ -40,7 +44,11 @@ include:
     - group: splunk
     - mode: 600
     - require:
+{% if salt['pillar.get']('splunkforwarder:package:name', False) %}
       - pkg: splunkforwarder
+{% else %}
+      - cmd: splunkforwarder
+{% endif %}
       - file: /opt/splunkforwarder/etc/apps/search/metadata
     - require_in:
       - service: splunkforwarder
