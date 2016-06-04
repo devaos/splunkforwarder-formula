@@ -22,9 +22,12 @@ is-splunkforwarder-package-outdated:
       - new=$(dpkg-deb --showformat='${Package} ${Version}\n' -W {{ package_filename }});
         old=$(dpkg-query --showformat='${Package} ${Version}\n' -W splunkforwarder);
         ver=$(echo "$old" | awk '{ print $2 }');
-        if test "$new" != "$old" && "$ver" != "";
+        if test "$new" != "$old" && test "$ver" != "";
           then echo; echo "changed=true comment='new($new) vs old($old)'";
-          else echo; echo "changed=false";
+        elif test "$old" == "";
+          then echo; echo "changed=true comment='new($new) vs old($old)'";
+        else
+          echo; echo "changed=false";
         fi;
     - require:
       - file: get-splunkforwarder-package
