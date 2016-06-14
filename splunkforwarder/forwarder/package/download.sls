@@ -36,6 +36,8 @@ splunkforwarder:
   cmd.watch:
     - cwd: /usr/local/src/
     - name: dpkg -i {{ package_filename }}
+    - require:
+      - cmd: is-splunkforwarder-package-outdated
     - watch:
       - cmd: is-splunkforwarder-package-outdated
   file:
