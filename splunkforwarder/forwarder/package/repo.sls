@@ -22,6 +22,12 @@ splunkforwarder:
     - source: salt://splunkforwarder/init.d/splunkforwarder.sh
     - template: jinja
     - mode: 500
+  file:
+    - managed
+    - name: /etc/systemd/system/splunkforwarder.service
+    - source: salt://splunkforwarder/init.d/splunkforwarder.service
+    - template: jinja
+    - mode: 644
   service:
     - running
     - name: splunkforwarder
@@ -34,3 +40,10 @@ splunkforwarder:
     - watch:
       - pkg: splunkforwarder
       - file: /opt/splunkforwarder/etc/system/local/outputs.conf
+
+yes_splunk:
+  cmd.run:
+    - name: yes | /opt/splunkforwarder/bin/splunk
+    - runas: splunk
+    - watch:
+      - pkg: splunkforwarder
