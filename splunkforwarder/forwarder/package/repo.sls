@@ -22,12 +22,12 @@ splunkforwarder:
     - source: salt://splunkforwarder/init.d/splunkforwarder.sh
     - template: jinja
     - mode: 500
-  file:
-    - managed
-    - name: /etc/systemd/system/splunkforwarder.service
-    - source: salt://splunkforwarder/init.d/splunkforwarder.service
-    - template: jinja
-    - mode: 644
+  # file:
+  #   - managed
+  #   - name: /etc/systemd/system/splunkforwarder.service
+  #   - source: salt://splunkforwarder/init.d/splunkforwarder.service
+  #   - template: jinja
+  #   - mode: 644
   service:
     - running
     - name: splunkforwarder
