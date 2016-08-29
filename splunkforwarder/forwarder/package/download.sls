@@ -63,3 +63,10 @@ splunkforwarder:
     - name: splunkforwarder.service
     - require:
       - service: splunkforwarder
+
+splunkforwarder.service:
+  service.running:
+    - provider: systemd
+    - enable: True
+    - require:
+      - service: splunkforwarder
