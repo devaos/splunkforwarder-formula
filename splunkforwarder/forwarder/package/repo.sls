@@ -18,16 +18,10 @@ splunkforwarder:
 {% endif %}
   file:
     - managed
-    - name: /etc/init.d/splunkforwarder
-    - source: salt://splunkforwarder/init.d/splunkforwarder.sh
+    - name: /etc/systemd/system/splunkforwarder.service
+    - source: salt://splunkforwarder/init.d/splunkforwarder.service
     - template: jinja
-    - mode: 500
-  # file:
-  #   - managed
-  #   - name: /etc/systemd/system/splunkforwarder.service
-  #   - source: salt://splunkforwarder/init.d/splunkforwarder.service
-  #   - template: jinja
-  #   - mode: 644
+    - mode: 644
   service:
     - running
     - name: splunkforwarder
