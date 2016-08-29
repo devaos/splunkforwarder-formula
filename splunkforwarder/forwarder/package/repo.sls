@@ -34,3 +34,7 @@ splunkforwarder:
     - watch:
       - pkg: splunkforwarder
       - file: /opt/splunkforwarder/etc/system/local/outputs.conf
+  systemd.enable:
+    - name: splunkforwarder.service
+    - require:
+      - service: splunkforwarder
