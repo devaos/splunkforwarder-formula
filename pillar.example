@@ -19,6 +19,7 @@ splunkforwarder:
 
 ### <-- end mutually exclusive
 
+  use_ssl: True
   cert_filename: selfsignedcert.pem
   intermediate: True
   forward_servers:

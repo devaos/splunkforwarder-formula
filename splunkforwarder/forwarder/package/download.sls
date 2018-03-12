@@ -43,8 +43,15 @@ splunkforwarder:
       - cmd: is-splunkforwarder-package-outdated
   file:
     - managed
+{%- if grains['init'] == 'sysvinit' %}
     - name: /etc/init.d/splunkforwarder
     - source: salt://splunkforwarder/init.d/splunkforwarder.sh
+{%- elif grains['init'] == 'systemd' %}
+    - name: /etc/systemd/system/splunkforwarder.service
+    - source: salt://splunkforwarder/init.d/splunkforwarder.service.jinja
+    - watch_in:
+      - cmd: reload_systemd_configuration
+{%- endif %}
     - template: jinja
     - mode: 500
   service:
@@ -62,3 +69,7 @@ splunkforwarder:
       - cmd: splunkforwarder
       - file: splunkforwarder
       - file: /opt/splunkforwarder/etc/system/local/outputs.conf
+
+reload_systemd_configuration:
+  cmd.wait:
+    - name: systemctl daemon-reload

@@ -22,14 +22,19 @@ include:
     - user: splunk
     - group: splunk
     - mode: 644
+{%- if pillar['splunkforwarder']['disable_ssl'] != True %}
     - context:
       self_cert: {{ self_cert }}
+{% endif %}
     - require:
       - pkg: splunkforwarder
       - file: /opt/splunkforwarder/etc/apps/search/local
-      - file: /opt/splunkforwarder/etc/certs/{{ self_cert }}
     - require_in:
       - service: splunkforwarder
+      file: /opt/splunkforwarder/etc/apps/search/local
+{%- if pillar['splunkforwarder']['disable_ssl'] != True %}
+      - file: /opt/splunkforwarder/etc/certs/{{ self_cert }}
+{%- endif %}
     - watch_in:
       - service: splunkforwarder
 
@@ -37,13 +42,17 @@ include:
   file:
     - managed
     - name: /opt/splunkforwarder/etc/system/local/outputs.conf
+{%- if pillar['splunkforwarder']['disable_ssl'] != True %}
+    - source: salt://splunkforwarder/etc-system-local/outputs-ssl.conf
+{%- else %}
     - source: salt://splunkforwarder/etc-system-local/outputs.conf
+{%- endif %}
     - template: jinja
     - user: splunk
     - group: splunk
     - mode: 600
-    - context:
-      self_cert: {{ self_cert }}
     - require:
       - pkg: splunkforwarder
+{%- if pillar['splunkforwarder']['disable_ssl'] != True %}
       - file: /opt/splunkforwarder/etc/certs/{{ self_cert }}
+{% endif %}
