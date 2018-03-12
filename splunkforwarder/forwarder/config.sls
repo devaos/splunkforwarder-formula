@@ -31,7 +31,7 @@ include:
       - file: /opt/splunkforwarder/etc/apps/search/local
     - require_in:
       - service: splunkforwarder
-      file: /opt/splunkforwarder/etc/apps/search/local
+      - file: /opt/splunkforwarder/etc/apps/search/local
 {%- if pillar['splunkforwarder']['disable_ssl'] != True %}
       - file: /opt/splunkforwarder/etc/certs/{{ self_cert }}
 {%- endif %}
