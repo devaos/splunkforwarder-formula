@@ -4,7 +4,6 @@ include:
   - splunkforwarder.certs
   - splunkforwarder.user
 
-
 /opt/splunkforwarder/etc/apps/search/local:
   file:
     - directory
@@ -27,7 +26,11 @@ include:
       self_cert: {{ self_cert }}
 {% endif %}
     - require:
+{% if salt['pillar.get']('splunkforwarder:package:name', False) %}
       - pkg: splunkforwarder
+{% else %}
+      - cmd: splunkforwarder
+{% endif %}
       - file: /opt/splunkforwarder/etc/apps/search/local
     - require_in:
       - service: splunkforwarder

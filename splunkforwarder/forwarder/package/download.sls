@@ -7,7 +7,6 @@ include:
   - splunkforwarder.user
   - splunkforwarder.forwarder.config
 
-
 get-splunkforwarder-package:
   file:
     - managed
@@ -22,27 +21,28 @@ is-splunkforwarder-package-outdated:
     - names:
       - new=$(dpkg-deb --showformat='${Package} ${Version}\n' -W {{ package_filename }});
         old=$(dpkg-query --showformat='${Package} ${Version}\n' -W splunkforwarder);
-        if test "$new" != "$old";
+        ver=$(echo "$old" | awk '{ print $2 }');
+        if test "$new" != "$old" && test "$ver" != "";
           then echo; echo "changed=true comment='new($new) vs old($old)'";
-          else echo; echo "changed=false";
+        elif test "$old" == "";
+          then echo; echo "changed=true comment='new($new) vs old($old)'";
+        else
+          echo; echo "changed=false";
         fi;
     - require:
-      - pkg: splunkforwarder
+      - file: get-splunkforwarder-package
 
 splunkforwarder:
-  pkg.installed:
-    - sources:
-      - splunkforwarder: /usr/local/src/{{ package_filename }}
-    - require:
-      - user: splunk_user
-      - file: get-splunkforwarder-package
   cmd.watch:
     - cwd: /usr/local/src/
     - name: dpkg -i {{ package_filename }}
+    - require:
+      - cmd: is-splunkforwarder-package-outdated
     - watch:
       - cmd: is-splunkforwarder-package-outdated
   file:
     - managed
+
 {%- if grains['init'] == 'sysvinit' %}
     - name: /etc/init.d/splunkforwarder
     - source: salt://splunkforwarder/init.d/splunkforwarder.sh
@@ -52,20 +52,19 @@ splunkforwarder:
     - watch_in:
       - cmd: reload_systemd_configuration
 {%- endif %}
+
     - template: jinja
-    - mode: 500
+    - mode: 644
   service:
     - running
     - name: splunkforwarder
     - enable: True
     - restart: True
     - require:
-      - pkg: splunkforwarder
       - cmd: splunkforwarder
       - file: splunkforwarder
       - file: /opt/splunkforwarder/etc/system/local/outputs.conf
     - watch:
-      - pkg: splunkforwarder
       - cmd: splunkforwarder
       - file: splunkforwarder
       - file: /opt/splunkforwarder/etc/system/local/outputs.conf
@@ -73,3 +72,10 @@ splunkforwarder:
 reload_systemd_configuration:
   cmd.wait:
     - name: systemctl daemon-reload
+
+splunkforwarder.service:
+  service.running:
+    - provider: systemd
+    - enable: True
+    - require:
+      - service: splunkforwarder

@@ -18,10 +18,10 @@ splunkforwarder:
 {% endif %}
   file:
     - managed
-    - name: /etc/init.d/splunkforwarder
-    - source: salt://splunkforwarder/init.d/splunkforwarder.sh
+    - name: /etc/systemd/system/splunkforwarder.service
+    - source: salt://splunkforwarder/init.d/splunkforwarder.service
     - template: jinja
-    - mode: 500
+    - mode: 644
   service:
     - running
     - name: splunkforwarder
@@ -34,3 +34,10 @@ splunkforwarder:
     - watch:
       - pkg: splunkforwarder
       - file: /opt/splunkforwarder/etc/system/local/outputs.conf
+
+splunkforwarder.service:
+  service.running:
+    - provider: systemd
+    - enable: True
+    - require:
+      - service: splunkforwarder
