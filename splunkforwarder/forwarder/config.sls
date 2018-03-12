@@ -52,7 +52,15 @@ include:
     - group: splunk
     - mode: 600
     - require:
+{% if salt['pillar.get']('splunkforwarder:package:name', False) %}
       - pkg: splunkforwarder
+{% else %}
+      - cmd: splunkforwarder
+{% endif %}
 {%- if pillar['splunkforwarder']['disable_ssl'] != True %}
       - file: /opt/splunkforwarder/etc/certs/{{ self_cert }}
 {% endif %}
+    - require_in:
+      - service: splunkforwarder
+    - watch_in:
+      - service: splunkforwarder
